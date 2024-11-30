@@ -5,8 +5,8 @@ description = ""
 authors = ["Francesco Bartoli <francesco.bartoli@geobeyond.it>"]
 readme = "README.md"
 packages = [
-    {include = "mapproxy_app"},
-    { include = "mapproxy_app/**/*.py" },
+    {include = "mapproxy"},
+    {include = "mapproxy/**/*.py"},
 ]
 
 [tool.poetry.dependencies]
@@ -15,7 +15,6 @@ mapproxy = {git = "https://github.com/mapproxy/mapproxy.git", branch = "master"}
 fastapi = {extras = ["standard"], version = "^0.115.4"}
 pydantic-settings = "^2.6.1"
 pillow = "^11.0.0"
-
 
 [build-system]
 requires = ["poetry-core"]
