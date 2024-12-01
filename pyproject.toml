@@ -5,8 +5,8 @@ description = ""
 authors = ["Francesco Bartoli <francesco.bartoli@geobeyond.it>"]
 readme = "README.md"
 packages = [
-    {include = "mapproxy"},
-    {include = "mapproxy/**/*.py"},
+    {include = "mapproxy_"},
+    {include = "mapproxy_/**/*.py"},
 ]
 
 [tool.poetry.dependencies]
