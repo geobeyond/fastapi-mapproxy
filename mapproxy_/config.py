@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     mapproxy_config_path: FilePath
+    mapproxy_context_path: str
+    mapproxy_app_title: str
     debug: bool
 
     class Config:

@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import mapproxy.config.loader
 import mapproxy.config.spec
@@ -6,7 +7,9 @@ import mapproxy.config.validator
 import mapproxy.wsgiapp
 import pydantic
 import yaml
+from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
 
 from .config import Settings
 
@@ -70,3 +73,46 @@ except pydantic.ValidationError:
 
 
 mapproxy_app = create_mapproxy_app(settings=mapproxy_settings)
+
+
+class MapProxyApp:
+    def __init__(
+        self,
+        prefix: str = mapproxy_settings.mapproxy_context_path,
+        title: str = mapproxy_settings.mapproxy_app_title,
+        docs_url="/custom-docs",
+    ):
+        self.app = FastAPI(
+            title=title,
+            docs_url=docs_url,
+        )
+        self.prefix = prefix
+        self._setup_routes()
+
+    def _setup_routes(self):
+        """Add additional routes"""
+
+        @self.app.get("/status")
+        async def status():
+            return {"status": "operational"}
+
+        @self.app.get("/custom-docs", include_in_schema=True)
+        async def custom_swagger_ui_html():
+            return get_swagger_ui_html(
+                openapi_url=self.app.openapi_url,
+                title=self.app.title,
+            )
+
+    def get_app(self) -> FastAPI:
+        """Return a FastAPI application
+
+        Returns:
+            FastAPI: the application
+        """
+        return self.app
+
+    def mount_to(self, parent_app: FastAPI, prefix: Optional[str] = None):
+        """Mount this application into another FastAPI application."""
+        mount_prefix = prefix or self.prefix
+        self.app.mount(app=mapproxy_app, path="/")
+        parent_app.mount(mount_prefix, self.app)
