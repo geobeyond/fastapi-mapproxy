@@ -7,5 +7,5 @@ class Settings(BaseSettings):
     debug: bool
 
     class Config:
-        env_file = ".env"
+        env_file = ".env_mapproxy"
         env_file_encoding = "utf-8"
